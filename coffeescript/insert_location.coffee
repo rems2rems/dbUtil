@@ -1,4 +1,4 @@
-module.exports = (db,name,callback=->)->
+module.exports = (db,name)->
     
     location =
         name : name
@@ -8,4 +8,4 @@ module.exports = (db,name,callback=->)->
     #     location.longitude = longitude
     #     location.latitude = latitude
     
-    db.save location,callback
+    return db.save location

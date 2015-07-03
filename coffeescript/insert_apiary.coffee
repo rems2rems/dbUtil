@@ -1,4 +1,4 @@
-module.exports = (db,name,location,callback=->)->
+module.exports = (db,name,location)->
     
     apiary =
         _id : name
@@ -8,4 +8,4 @@ module.exports = (db,name,location,callback=->)->
     if location?
         apiary.location_id = location._id
     
-    db.save apiary,callback
+    return db.save apiary

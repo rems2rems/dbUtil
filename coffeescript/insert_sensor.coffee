@@ -1,4 +1,4 @@
-module.exports = (db,beehouse,pin,bias,gain,name,unit,callback=->)->
+module.exports = (db,beehouse,pin,bias,gain,name,unit)->
     
     sensor =
         name : name
@@ -9,5 +9,5 @@ module.exports = (db,beehouse,pin,bias,gain,name,unit,callback=->)->
         bias : bias
         unit : unit
 
-    db.save sensor,callback
+    return db.save sensor
 

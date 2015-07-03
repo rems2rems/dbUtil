@@ -16,19 +16,24 @@
 
 createViews = require './create_views'
 createUsers = require './create_users'
-insert_beehouse_model = require './insert_beehouse_model'
+promisify_db = require './promisify_cradle'
+Promise = require 'promise'
 
 module.exports = (dbDriver,name)=>
     
-    db = dbDriver.database(name)
+    return new Promise((fulfill,reject)->
 
-    usersDb = dbDriver.database("_users")
+        db = dbDriver.database(name)
+        db = promisify_db(db)
 
-    db.create =>
+        usersDb = dbDriver.database("_users")
+        usersDb = promisify_db(usersDb)
 
-        insert_beehouse_model db
-        createViews db
-        createUsers usersDb,db,name
-        
+        db.create().then ()->
 
-    return db
+            createViews(db).then (views)->
+
+                createUsers(usersDb,db,name).then ->
+
+                    return fulfill(db)
+    )

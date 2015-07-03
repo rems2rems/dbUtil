@@ -1,6 +1,6 @@
-require '../../util/javascript/numberUtils'
-arrayUtils = require '../../util/javascript/arrayUtils'
-mixin = require '../../util/javascript/mixin'
+require '../../openbeelab-util/javascript/numberUtils'
+arrayUtils = require '../../openbeelab-util/javascript/arrayUtils'
+mixin = require '../../openbeelab-util/javascript/mixin'
 mixin.include Array,arrayUtils
 
 generatePassword = ->
@@ -38,7 +38,7 @@ module.exports = (usersDb,db,dbName)->
 
     console.log "dbUploader login:"+dbUploader.name
     console.log "dbUploader password:"+dbUploader.password
-    
+
     usersDb.save dbUploader
 
     security_doc =
@@ -50,6 +50,7 @@ module.exports = (usersDb,db,dbName)->
             names : [dbUploader.name]
             roles : []
 
-    db.save security_doc
+    #todo: create an "all" promise with admin and uploader promises
+    return db.save security_doc
 
     
