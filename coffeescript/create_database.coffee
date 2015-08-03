@@ -16,15 +16,10 @@
 
 createViews = require './create_views'
 createUsers = require './create_users'
-<<<<<<< HEAD
-=======
-promisify_db = require './promisify_cradle'
->>>>>>> 85aa34f0bdbfe3ce2fbff4c90655bd0a63a573d1
 Promise = require 'promise'
 
 module.exports = (usersDb,db,name)=>
     
-<<<<<<< HEAD
     promise = db.create()
     .then ()->
 
@@ -35,21 +30,3 @@ module.exports = (usersDb,db,name)=>
         createUsers(usersDb,db,name)
 
     return promise
-=======
-    return new Promise((fulfill,reject)->
-
-        db = dbDriver.database(name)
-        db = promisify_db(db)
-
-        usersDb = dbDriver.database("_users")
-        usersDb = promisify_db(usersDb)
-
-        db.create().then ()->
-
-            createViews(db).then (views)->
-
-                createUsers(usersDb,db,name).then ->
-
-                    return fulfill(db)
-    )
->>>>>>> 85aa34f0bdbfe3ce2fbff4c90655bd0a63a573d1
