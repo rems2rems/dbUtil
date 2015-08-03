@@ -1,12 +1,11 @@
-module.exports = (db,apiary,name,model_id,callback=->)->
+module.exports = (db,apiary,name,model_id)->
     
     beehouse =
-        _id : name
+        _id : "beehouse:" + name
         name : name
         type : "beehouse"
         apiary_id : apiary?._id
         model_id : model_id
         number_of_extra_boxes : 0
 
-    db.save beehouse,callback
-
+    return db.save beehouse

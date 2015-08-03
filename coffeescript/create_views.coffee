@@ -15,13 +15,30 @@
 # along with OpenBeeLab.  If not, see <http://www.gnu.org/licenses/>.
 
 fs = require 'fs'
+Promise = require 'promise'
+
 createView = require("./create_view")
             
 module.exports = (db)->
 
-    fs.readdir (__dirname + "/views"),(err,filenames)=>
-        
-        for filename in filenames
+    return new Promise((fulfill,reject)->
 
-            viewName = filename.split(".")[0]
-            createView(db,"./views/"+viewName)
+        fs.readdir (__dirname + "/views"),(err,filenames)=>
+            
+            if(err)
+                reject(err)
+                return
+
+            promise = Promise.all(filenames.map((filename)->
+                viewName = filename.split(".")[0]
+                return createView db,"./views/"+viewName
+                )
+            )
+
+            promise.then (views)->
+                fulfill(views)
+    )
+    
+
+            
+

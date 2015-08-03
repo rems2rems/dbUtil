@@ -16,19 +16,17 @@
 
 createViews = require './create_views'
 createUsers = require './create_users'
-insert_beehouse_model = require './insert_beehouse_model'
+Promise = require 'promise'
 
-module.exports = (dbDriver,name)=>
+module.exports = (usersDb,db,name)=>
     
-    db = dbDriver.database(name)
+    promise = db.create()
+    .then ()->
 
-    usersDb = dbDriver.database("_users")
+        createViews(db)
 
-    db.create =>
+    .then ()->
 
-        insert_beehouse_model db
-        createViews db
-        createUsers usersDb,db,name
-        
+        createUsers(usersDb,db,name)
 
-    return db
+    return promise

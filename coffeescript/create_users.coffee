@@ -1,18 +1,7 @@
-require '../../util/javascript/numberUtils'
-arrayUtils = require '../../util/javascript/arrayUtils'
-mixin = require '../../util/javascript/mixin'
-mixin.include Array,arrayUtils
 
-generatePassword = ->
+require('../../openbeelab-util/javascript/stringUtils').install()
 
-    password = ""
-    6.times ->
-
-        letter = ['a'..'z'].pickRandom()[['toLowerCase','toUpperCase'].pickRandom()]()
-        digit = [0..9].pickRandom()
-        password += [letter,digit].pickRandom()
-
-    return password
+Promise = require 'promise'
 
 module.exports = (usersDb,db,dbName)->
 
@@ -21,12 +10,12 @@ module.exports = (usersDb,db,dbName)->
         type : "user"
         name : dbName+'_admin'
         roles : ["admin"]
-        password : generatePassword()
+        password : String.generateToken(6)
 
     console.log "dbAdmin login:"+dbAdmin.name
     console.log "dbAdmin password:"+dbAdmin.password
     
-    usersDb.save dbAdmin
+    adminPromise = usersDb.save dbAdmin
 
     dbUploader =
 
@@ -34,12 +23,12 @@ module.exports = (usersDb,db,dbName)->
         type : "user"
         name : dbName+'_uploader'
         roles : []
-        password : generatePassword()
+        password : String.generateToken(6)
 
     console.log "dbUploader login:"+dbUploader.name
     console.log "dbUploader password:"+dbUploader.password
-    
-    usersDb.save dbUploader
+
+    uploaderPromise = usersDb.save dbUploader
 
     security_doc =
         _id : '_security'
@@ -50,6 +39,10 @@ module.exports = (usersDb,db,dbName)->
             names : [dbUploader.name]
             roles : []
 
-    db.save security_doc
+    securityPromise = Promise.all [adminPromise,uploaderPromise]
+    securityPromise.then ->
+        db.save security_doc
+    
+    return securityPromise
 
     

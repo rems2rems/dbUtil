@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with OpenBeeLab.  If not, see <http://www.gnu.org/licenses/>.
 
-module.exports = (db,viewName,callback)->
+module.exports = (db,viewName)->
 
     view = require viewName
-    db.save view,callback
+    return db.save view

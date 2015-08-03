@@ -1,11 +1,10 @@
-module.exports = (db,name,callback=->)->
+module.exports = (db,name,longitude,latitude)->
     
     location =
+        _id : 'location:' + name
         name : name
         type : "location"
-
-    # if longitude? and latitude?
-    #     location.longitude = longitude
-    #     location.latitude = latitude
+        longitude : longitude
+        latitude : latitude
     
-    db.save location,callback
+    return db.save location

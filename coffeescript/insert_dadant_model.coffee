@@ -1,7 +1,7 @@
 module.exports = (db,callback=->)->
 
     dadant =
-        _id : "dadant"
+        _id : "beehousemodel:dadant"
         name : "dadant"
         type : "beehouse_model"
         model : "dadant"
@@ -12,5 +12,5 @@ module.exports = (db,callback=->)->
             value : 5
             unit : "Kg"
 
-    db.save dadant,callback
+    return db.save dadant
 
