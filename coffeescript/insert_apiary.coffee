@@ -1,11 +1,13 @@
-module.exports = (db,name,location)->
-    
+
+module.exports = (db,location,name)->
+
     apiary =
         _id : "apiary:" + name
         name : name
         type : "apiary"
 
-    if location?
-        apiary.location_id = location._id
+    apiary.location_id = location?._id
     
-    return db.save apiary
+    db.save(apiary).then ->
+
+        return [db,apiary]

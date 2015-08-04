@@ -1,17 +1,17 @@
 module.exports = 
-    _id : '_design/sensors'
+    _id : '_design/stands'
     views :
 
         by_name :
             map : ((doc)-> 
-                if doc.type == "sensor"
+                if doc.type == "stand"
                     emit doc.name,doc
 
                 ).toString()
 
-        by_beehouse :
+        by_apiary :
             map : ((doc)-> 
-                if doc.type == "sensor"
-                    emit doc.beehouse_id,doc
+                if doc.type == "stand"
+                    emit doc.apiary_id,doc
 
                 ).toString()

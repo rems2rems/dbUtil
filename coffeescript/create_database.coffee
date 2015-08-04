@@ -16,11 +16,10 @@
 
 createViews = require './create_views'
 createUsers = require './create_users'
-Promise = require 'promise'
 
 module.exports = (usersDb,db,name)=>
     
-    promise = db.create()
+    db.create()
     .then ()->
 
         createViews(db)
@@ -29,4 +28,6 @@ module.exports = (usersDb,db,name)=>
 
         createUsers(usersDb,db,name)
 
-    return promise
+    .then ->
+
+    	return db
