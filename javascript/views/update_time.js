@@ -2,6 +2,7 @@
 (function() {
   module.exports = {
     _id: '_design/updates',
+    views: {},
     updates: {
       time: (function(doc, req) {
         if (!doc.server_timestamp) {

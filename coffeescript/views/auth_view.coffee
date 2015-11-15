@@ -2,6 +2,7 @@ module.exports =
 
     _id : '_design/auth'
 
+    views : {}
     validate_doc_update : ((newDoc, oldDoc, userCtx)->
 
         updated = oldDoc isnt null

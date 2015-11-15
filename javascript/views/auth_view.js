@@ -2,6 +2,7 @@
 (function() {
   module.exports = {
     _id: '_design/auth',
+    views: {},
     validate_doc_update: (function(newDoc, oldDoc, userCtx) {
       var deleted, isLogged, updated;
       updated = oldDoc !== null;

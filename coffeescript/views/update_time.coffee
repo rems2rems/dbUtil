@@ -2,6 +2,7 @@ module.exports =
 
     _id : '_design/updates'
 
+    views : {}
     updates : 
 
         time : ((doc, req)->
