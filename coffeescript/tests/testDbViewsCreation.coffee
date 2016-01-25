@@ -14,13 +14,6 @@ config =
     database :
 
         name : 'test'
-        host : 'dev.openbeelab.org'
-        #host : 'localhost'
-        protocol : 'http'
-        port : 5984
-        auth:
-            username: 'admin'
-            password: 'c0uch@dm1n'
 
 db = dbDriver.connectToServer(config.database).useDb(config.database.name)
 
@@ -28,12 +21,24 @@ describe "a mock db",->
 
     it "should deal with views", (done)->
 
-        view =
+        standsView =
             _id : '_design/stands'
             views :
                 all :
                     map : ((doc)->
                         if doc.type == "stand"
+                            
+                            emit doc._id,doc
+
+                        ).toString()
+
+        locsView =
+            _id : '_design/locs'
+            views :
+                all :
+                    map : ((doc)->
+                        if doc.type == "location"
+                            
                             emit doc._id,doc
 
                         ).toString()
@@ -41,30 +46,46 @@ describe "a mock db",->
         db.create()
         .then ()->
 
-            db.save view
+            db.save standsView
+
+        .then ()->
+
+            db.save locsView
 
         .then ()->
             
-            db.save {type : 'stand', name:'test_stand'}
+            db.save { _id : "test_stand", type : 'stand', name:'a test stand'}
 
         .then ()->
             
-            db.save {type : 'location', name:'test_location'}
+            db.save { _id: 'test_location', type : 'location', name:'a test location'}
 
         .then ()->
 
             db.get '_design/stands/_view/all'
             .then (data)->
                 
-                #console.log util.inspect(data,true,3,true)
-
                 expect(data).to.not.be.null()
-                expect(data.total_rows).to.not.be.null()
-                
+                expect(data.total_rows).to.be.a.number()
                 data.total_rows.must.be(1)
-                data.rows[0].key.name.must.be('test_stand')
+                
+                data.rows[0].key.must.be('test_stand')
+                data.rows[0].value.type.must.be("stand")
+
+        .then ()->
+
+            db.get '_design/locs/_view/all'
+            .then (data)->
+                
+                expect(data).to.not.be.null()
+                expect(data.total_rows).to.be.a.number()
+                data.total_rows.must.be(1)
+                
+                data.rows[0].key.must.be('test_location')
+                data.rows[0].value.type.must.be("location")
+
                 done()
         
-            .catch (err)->
+        .catch (err)->
             
-                done(err)
+            done(err)
