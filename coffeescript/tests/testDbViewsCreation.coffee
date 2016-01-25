@@ -1,16 +1,15 @@
 
 expect = require 'must'
-require('../../openbeelab-util/javascript/objectUtils').install()
-require('../../openbeelab-util/javascript/arrayUtils').install()
+require('../../../openbeelab-util/javascript/objectUtils').install()
+require('../../../openbeelab-util/javascript/arrayUtils').install()
+util = require 'util'
 
+promisify_db = require '../promisify_dbDriver'
 
-promisify_db = require './promisify_dbDriver'
-
-dbDriver = require('./mockDriver')
+dbDriver = require('../mockDriver')
 Promise = require 'promise'
 
-
-config = 
+config =
     
     database :
 
@@ -29,11 +28,11 @@ describe "a mock db",->
 
     it "should deal with views", (done)->
 
-        view = 
+        view =
             _id : '_design/stands'
             views :
                 all :
-                    map : ((doc)-> 
+                    map : ((doc)->
                         if doc.type == "stand"
                             emit doc._id,doc
 
@@ -47,6 +46,7 @@ describe "a mock db",->
         .then ()->
             
             db.save {type : 'stand', name:'test_stand'}
+
         .then ()->
             
             db.save {type : 'location', name:'test_location'}
@@ -55,8 +55,16 @@ describe "a mock db",->
 
             db.get '_design/stands/_view/all'
             .then (data)->
+                
+                #console.log util.inspect(data,true,3,true)
 
+                expect(data).to.not.be.null()
+                expect(data.total_rows).to.not.be.null()
+                
                 data.total_rows.must.be(1)
                 data.rows[0].key.name.must.be('test_stand')
-
-        done()
+                done()
+        
+            .catch (err)->
+            
+                done(err)

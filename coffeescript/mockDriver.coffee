@@ -1,5 +1,6 @@
 require('../../openbeelab-util/javascript/stringUtils').install()
 promisify_db = require './promisify_dbDriver'
+util = require 'util'
 
 exports.dbs = dbs =
     _users : {}
@@ -13,32 +14,32 @@ exports.connectToServer = (config) ->
             # console.log "name:" + name
             # console.log("emit:" + key);
             emit = (key,value) ->  isEmitted = true; outKey = key; outValue = value
-            ev = "mapFunc = (" + view['map'] + ').bind(this)'
+            ev = "mapFunc = (" + view['map'] + ')'
             # console.log ev
             eval(ev)
-            if view['reduce']?
-                eval("reduceFunc = (" + view['reduce'] + ').bind(this)')
+            #if view['reduce']?
+            #    eval("reduceFunc = (" + view['reduce'] + ').bind(this)')
                             
             # eval("mapFunc = " + view.map.bind(@)
 
             docs = []
             for own _,candidate of db.data when not candidate._id.startsWith('_design/')
                 
-                # console.log "candidate:" + candidate._id
+                console.log "candidate:" + candidate._id
                 isEmitted = false
                 outKey = null
                 outValue = null
                 
                 mapFunc(candidate)
-                # console.log "key:" + outKey + "," + outValue + "," + isEmitted
+                console.log "key:" + outKey + "," + outValue + "," + isEmitted
                 if isEmitted
                     docs.push {key: key, value: value}
 
-                if reduceFunc?
-                    reduceFunc(docs)
+                #if reduceFunc?
+                #    reduceFunc(docs)
 
-            res = docs.pluck('value')
-            db.views[name].data = {total_rows : res.length, rows: res}
+            #res = docs.pluck('value')
+            db.views[name].data = {total_rows : docs.length, rows: docs }
 
     return {
 
@@ -73,12 +74,15 @@ exports.connectToServer = (config) ->
                     
                     console.log "==============="
                     console.log doc
-                    console.log "---------------"
-                    console.log db
-                    console.log "==============="
-                    console.log ""
+                    console.log "-- db avant ---"
+                    console.log util.inspect(db,true,3,true)
                     
                     db.data[doc._id] = doc
+                    
+                    console.log "---------------"
+                    console.log util.inspect(db,true,5,true)
+                    console.log "==============="
+                    console.log ""
 
                     if doc._id.startsWith '_design'
 
@@ -110,9 +114,15 @@ exports.connectToServer = (config) ->
 
                 get : (id,callback)->
 
+                    console.log "==============="
+                    console.log id
+                    console.log "-- db ----- ---"
+                    console.log util.inspect(db,true,5,true)
+                    console.log "==============="
+                    
                     if id?.startsWith '_design/'
                         # console.log id
-                        db.views[id].data
+                        callback(null,db.views[id].data)
                     else
                         doc = null
                         if not db?.data[id]?._deleted
