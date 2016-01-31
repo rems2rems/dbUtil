@@ -9,9 +9,10 @@
   exports.connectToServer = function(config) {
     var server;
     server = new cradle.Connection(config.protocol + '://' + config.host, config.port, config);
-    return server.useDb = function(name) {
+    server.useDb = function(name) {
       return promisify_db(this.database(name));
     };
+    return server;
   };
 
 }).call(this);

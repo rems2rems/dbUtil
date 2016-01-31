@@ -23,7 +23,8 @@ config =
             username: 'admin'
             password: 'c0uch@dm1n'
 
-db = dbDriver.connectToServer(config.database).useDb(config.database.name)
+dbServer = dbDriver.connectToServer(config.database)
+db = dbServer.useDb(config.database.name)
 
 describe "a mock db",->
 
@@ -40,12 +41,38 @@ describe "a mock db",->
 
         .then ()->
             
-            db.get 'aType'
-            .then (doc)->
+            db.get 'testDoc'
+        
+        .then (doc)->
 
-                doc._id.must.be('testDoc')
-                doc.type.must.be('aType')
-                
-                db.get 'aType'
+            doc._id.must.be('testDoc')
+            doc.type.must.be('aType')
+            done()
 
-        done()
+        .catch (err)->
+
+            done(err)
+               
+    it "can be deleted", (done)->
+
+        dbServer.deleteDb(config.database.name)
+        db2 = dbServer.useDb(config.database.name)
+        db2.exists()
+        .then (dbExists)->
+
+            dbExists.must.be.false()
+            db2.create()
+
+        .then ->
+
+            db2.get 'testDoc'
+        
+        .then (doc)->
+
+            expect(doc).to.be.undefined()
+        
+            done()
+
+        .catch (err)->
+
+            done(err)

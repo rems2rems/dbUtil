@@ -2,17 +2,14 @@ require('../../openbeelab-util/javascript/stringUtils').install()
 promisify_db = require './promisify_dbDriver'
 util = require 'util'
 
-
-
-docs = []
-
-emit = (key,value) -> docs.push {key: key, value : value}
-exports.dbs = dbs =
-    _users : {}
-
-                
 exports.connectToServer = (config) ->
 
+    docs = []
+
+    emit = (key,value) -> docs.push {key: key, value : value}
+
+    dbs = {}
+    
     updateViews = (db)->
         
         for own name,view of db.views
@@ -25,7 +22,8 @@ exports.connectToServer = (config) ->
             db.views[name].data = {total_rows : docs.length, rows: docs.clone() }
 
     return {
-
+            
+        deleteDb : (name) -> delete dbs[name];  db = null
         database : (name)->
 
             db = dbs[name]
@@ -33,13 +31,13 @@ exports.connectToServer = (config) ->
             return {
 
                 exists : (callback)->
-
+                    
                     callback(null,dbs?[name]?)
 
                 create : (callback)->
 
                     if db?
-                        callback('db exists.')
+                        callback('db ' + name + ' exists.')
                     else
                         db = dbs[name] = {views:{},data:{}}
                         callback(null)
@@ -98,12 +96,11 @@ exports.connectToServer = (config) ->
 
                         doc = null
                         if not db?.data[id]?._deleted
-                            doc = db?.data[id] 
+                            doc = db?.data[id]
                         callback(null,doc)
             }
 
         useDb : (name)->
     
             return promisify_db(@database(name))
-
     }
