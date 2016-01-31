@@ -15,14 +15,13 @@
 # along with OpenBeeLab.  If not, see <http://www.gnu.org/licenses/>.
 
 cradle = require 'cradle'
-promisify_db = require './promisify_cradle'
+promisify_db = require './promisify_dbDriver'
 
-exports.configuredDriver = (config) ->
+exports.connectToServer = (config) ->
 
-    new (cradle.Connection)(config.protocol + '://'+ config.host, config.port,config)
+    server = new (cradle.Connection)(config.protocol + '://'+ config.host, config.port,config)
+    server.useDb = (name)->
+        
+        return promisify_db(@database(name))
 
-exports.database = (config)->
-    
-    db = @configuredDriver(config).database(config.name)
-    db = promisify_db(db)
-    
+    return server

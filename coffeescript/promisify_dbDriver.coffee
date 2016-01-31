@@ -16,8 +16,9 @@ module.exports = (db)->
         create : create
         exists : exists
         remove : remove
+        reset : db.reset
         addServerTimestamp : (obj)->
-            add_server_timestamp = 
+            add_server_timestamp =
                 _id : "_design/updates/_update/time/" + obj._id
             
             @save(add_server_timestamp)
