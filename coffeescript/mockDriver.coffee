@@ -11,34 +11,21 @@ exports.connectToServer = (config) ->
     updateViews = (db)->
         
         for own name,view of db.views
-            # console.log "name:" + name
-            # console.log("emit:" + key);
+            
             emit = (key,value) ->  isEmitted = true; outKey = key; outValue = value
-            ev = "mapFunc = (" + view['map'] + ')'
-            # console.log ev
-            eval(ev)
-            #if view['reduce']?
-            #    eval("reduceFunc = (" + view['reduce'] + ').bind(this)')
-                            
-            # eval("mapFunc = " + view.map.bind(@)
+            eval("mapFunc = (" + view['map'] + ')')
 
             docs = []
             for own _,candidate of db.data when not candidate._id.startsWith('_design/')
                 
-                console.log "candidate:" + candidate._id
                 isEmitted = false
                 outKey = null
                 outValue = null
                 
                 mapFunc(candidate)
-                console.log "key:" + outKey + "," + outValue + "," + isEmitted
                 if isEmitted
                     docs.push {key: key, value: value}
 
-                #if reduceFunc?
-                #    reduceFunc(docs)
-
-            #res = docs.pluck('value')
             db.views[name].data = {total_rows : docs.length, rows: docs }
 
     return {
@@ -126,7 +113,7 @@ exports.connectToServer = (config) ->
                     else
                         doc = null
                         if not db?.data[id]?._deleted
-                            doc = db?.data[id] 
+                            doc = db?.data[id]
                         callback(null,doc)
             }
 

@@ -16,7 +16,7 @@
   exports.connectToServer = function(config) {
     var updateViews;
     updateViews = function(db) {
-      var _, candidate, docs, emit, ev, isEmitted, name, outKey, outValue, ref, ref1, results, view;
+      var _, candidate, docs, emit, isEmitted, name, outKey, outValue, ref, ref1, results, view;
       ref = db.views;
       results = [];
       for (name in ref) {
@@ -28,8 +28,7 @@
           outKey = key;
           return outValue = value;
         };
-        ev = "mapFunc = (" + view['map'] + ')';
-        eval(ev);
+        eval("mapFunc = (" + view['map'] + ')');
         docs = [];
         ref1 = db.data;
         for (_ in ref1) {
@@ -38,12 +37,10 @@
           if (!(!candidate._id.startsWith('_design/'))) {
             continue;
           }
-          console.log("candidate:" + candidate._id);
           isEmitted = false;
           outKey = null;
           outValue = null;
           mapFunc(candidate);
-          console.log("key:" + outKey + "," + outValue + "," + isEmitted);
           if (isEmitted) {
             docs.push({
               key: key,
