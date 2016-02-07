@@ -90,7 +90,7 @@ exports.connectToServer = (config) ->
                 get : (id,callback)->
 
                     if id?.startsWith '_design/'
-                        
+                        id = id.split('?')[0]
                         callback(null,db.views[id].data)
                     else
 

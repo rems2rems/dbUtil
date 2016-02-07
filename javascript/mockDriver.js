@@ -122,6 +122,7 @@
           get: function(id, callback) {
             var doc, ref;
             if (id != null ? id.startsWith('_design/') : void 0) {
+              id = id.split('?')[0];
               return callback(null, db.views[id].data);
             } else {
               doc = null;
