@@ -23,3 +23,4 @@ exports.connectToServer = (config) ->
     server.useDb = (name)->
         
         return promisify_db(@database(name))
+    return server
