@@ -19,6 +19,7 @@
       create: create,
       exists: exists,
       remove: remove,
+      reset: db.reset,
       addServerTimestamp: function(obj) {
         var add_server_timestamp;
         add_server_timestamp = {
